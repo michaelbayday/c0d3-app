@@ -9,36 +9,10 @@ type LessonsProp = {
   lessons: Lesson[]
 }
 
-type lesson = {
-  order: number
-  progress: string
-}
-
-const LessonImage: React.FC<lesson> = ({ progress, order }) => {
-  let color = 'primary'
-  if (progress === '100%') {
-    color = 'success'
-  }
-
-  let opacity = 1
-  let badge = (
-    <p
-      style={{
-        position: 'absolute',
-        top: '15px',
-        right: '15px',
-        border: 'solid white 2px'
-      }}
-      className={`badge badge-pill badge-${color}`}
-    >
-      {progress}
-    </p>
-  )
-
-  if (progress === '0%') {
-    badge = <></>
-    opacity = 0.5
-  }
+const LessonImage: React.FC<Lesson> = ({ progress = 0, order }) => {
+  const lessonProgress = progress + '%'
+  const color = lessonProgress === '100%' ? 'success' : 'primary'
+  const opacity = lessonProgress === '0%' ? 0.5 : 1
 
   return (
     <div
@@ -49,7 +23,19 @@ const LessonImage: React.FC<lesson> = ({ progress, order }) => {
         display: 'inline-block'
       }}
     >
-      {badge}
+      {progress && (
+        <p
+          style={{
+            position: 'absolute',
+            top: '15px',
+            right: '15px',
+            border: 'solid white 2px'
+          }}
+          className={`badge badge-pill badge-${color}`}
+        >
+          {lessonProgress}
+        </p>
+      )}
       <img src={`/curriculumAssets/lessonCoversSvg/js-${order}-cover.svg`} />
     </div>
   )
@@ -57,15 +43,8 @@ const LessonImage: React.FC<lesson> = ({ progress, order }) => {
 
 const ProfileLessons: React.FC<LessonsProp> = ({ lessons }) => {
   const displayLessons = lessons.map((lesson, i) => {
-    if (!lesson.progress) {
-      lesson.progress = 0
-    }
     return (
-      <LessonImage
-        key={i}
-        order={lesson.order}
-        progress={lesson.progress + '%'}
-      ></LessonImage>
+      <LessonImage key={i} order={lesson.order} progress={lesson.progress} />
     )
   })
 
